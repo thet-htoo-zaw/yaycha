@@ -1,31 +1,55 @@
-function Item({ content, name }){
-  return(
-    <li style={{ padding: 10, borderBottom: "1px solid #ddd"}}>
-      {content} -<b>{name}</b>
-    </li>
-  );
-}
+import { useState } from "react";
+import Item from "./Item";
+import List from "./List";
+import Form from "./Form";
 
-function List({ children }){
-  return <ul style={{
-    listStyle : "none",
-    padding : 0,
-    margin: 0,
-    border: "1px solid #ddd",
-    borderRadius: 8,
-    overflow: "hidden", 
-  }}>
-    {children}
-  </ul>;
-}
 
 export default function App() {
+
+  const [showForm, setShowForm] = useState(false);
+
+  const [data,setData] = useState([
+    {id: 1, content: "Hello, World!", name: "Alice"},
+    {id: 2, content: "React is fun!", name: "Bob"},
+    {id: 3, content: "Ha Ha Ha..", name: "James"}
+  ]);
+
+  const remove = id => {
+    setData(data.filter(item => item.id !== id));
+  };
+
+  const add = (content, name) => {
+    const id = data[data.length - 1].id + 1;
+    setData([...data, {id, content, name}])
+  }
+
   return (
-    <div style={{ maxWidth: 600, margin: "2px auto" }}>
-      <h1>Yaycha</h1>
+    <div style={{ maxWidth: 600, margin: "20px auto" }}>
+      <h1 style={{
+        display: "flex",
+        justifyContent: "space-between",
+        alignItems: "center"
+      }}>
+        Yaycha
+        <button
+          onClick={() => setShowForm(!showForm)}
+          style={{
+            width: 32,
+            height: 32,
+            borderRadius: 50,
+            border: "0 none",
+            background: showForm ? "#dc3545" : "#0d6efd" ,
+            color: "white"
+          }}
+        >
+          {showForm ? "x" : "+"}
+        </button>
+        </h1>
+      {showForm && <Form add={add}/> }
       <List>
-        <Item content="Hello, World!" name="Alice" />
-        <Item content="React is fun!" name="Bob" />
+        {data.map(item => (
+          <Item key={item.id} item={item} remove={remove} />
+        ))}
       </List>
     </div>
   );
